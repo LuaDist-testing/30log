@@ -1,5 +1,5 @@
 require 'luacov'
-local class = require '30log'
+local class = require('30log')
 
 context('Instantiation', function()
 	local Window, window
@@ -39,13 +39,19 @@ context('Instantiation', function()
 	
 end)
 
-context('init() method, when provided',function()
-	local Window, window
+context('init() method',function()
+	local Window, window, Win_no_init
 	
 	before(function()
 		Window = class {size = 100}
+		Win_no_init = class()
 		function Window:init(size) Window.setSize(self,size) end
 		function Window:setSize(size) self.size = size end
+	end)
+	
+	test('is not mandatory', function()
+		local win_no_init = Win_no_init()
+		assert_equal(win_no_init.class, Win_no_init)
 	end)
 	
 	test('is used as an initialization function when instantiating with new(...)',function()
@@ -53,7 +59,7 @@ context('init() method, when provided',function()
 		assert_equal(window.size,75)
 	end)     
 	
-	test('is used as an initialization function when instantiating via a class call',function()
+	test('or via a class call',function()
 		window = Window(90)
 		assert_equal(window.size,90)
 	end)
@@ -99,24 +105,27 @@ context('attributes',function()
 	local aclass, instance
 	
 	before(function() 
-		aclass = class('aclass', {attr = 'attr', value = 0})
+		aclass = class('aclass', {attr = 'attr', value = 0, tab = {}})
 		instance = aclass()
 	end)
 	
-	test('instances have access to their class attributes', function()
+	test('instances takes by default their class attributes values', function()
 		assert_equal(instance.attr, 'attr')
 		assert_equal(instance.value, 0)
 	end)
 	
-	test('but they can override their class attributes', function()
+	test('these attributes are independant copies', function()
 		instance.attr, instance.value = 'instance_attr', 1
+		instance.tab.v = 1
 		assert_equal(instance.attr, 'instance_attr')
 		assert_equal(instance.value, 1)
+		assert_equal(instance.tab.v, 1)		
 	end)
 	
-	test('without affecting the class attributes', function()
+	test('modifying them will not affect the class attributes', function()
 		assert_equal(aclass.attr, 'attr')
 		assert_equal(aclass.value, 0)	
+		assert_nil(aclass.tab.v)		
 	end)
 
 end)
@@ -133,31 +142,47 @@ context('methods',function()
 	
 	test('instances have access to their class methods', function()
 		assert_equal(instance:say('hi!'), 'hi!')
-	end)
+	end)		
 	
-	test('instances cannot call new(), as it raises an error', function()
-		assert_error(function() return instance:new() end)
-		assert_error(function() return instance() end)
-	end)
+	context('but instances cannot call some class methods, such as', function()
+	
+		test('new()', function()
+			assert_error(function() return instance:new() end)
+			assert_error(function() return instance() end)
+		end)
+		
+		test('extend()', function()
+			assert_error(function() return instance:extend() end)
+		end)
 
-	test('instances cannot call extends(), as it raises an error', function()
-		assert_error(function() return instance:extends() end)
-	end)
-	
-	test('instances cannot call include(), as it raises an error', function()
-		assert_error(function() return instance:include({}) end)
-	end)
-	
-	test('instances cannot call has(), as it raises an error', function()
-		assert_error(function() return instance:has({}) end)
-	end)
+		test('classOf()', function()
+			assert_error(function() return instance:classOf(aclass) end)
+		end)
+		
+		test('subclassOf()', function()
+			assert_error(function() return instance:subclassOf(aclass) end)
+		end)	
+		
+		test('subclasses()', function()
+			assert_error(function() return instance:subclasses() end)
+		end)
+		
+		test('instances()', function()
+			assert_error(function() return instance:instances() end)
+		end)
+		
+		test('with()', function()
+			assert_error(function() return instance:with() end)
+		end)		
+		
+		test('includes()', function()
+			assert_error(function() return instance:includes() end)
+		end)
 
-	test('instances cannot call classOf(), as it raises an error', function()
-		assert_error(function() return instance:classOf(aclass) end)
-	end)
+		test('without()', function()
+			assert_error(function() return instance:without() end)
+		end)		
 	
-	test('instances cannot call subclassOf(), as it raises an error', function()
-		assert_error(function() return instance:subclassOf(aclass) end)
-	end)	
+	end)
 	
 end)

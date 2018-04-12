@@ -1,33 +1,33 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "30log"
-version = "1.0.0-1"
+version = "1.1.0-1"
 -- LuaDist source
 source = {
-  tag = "1.0.0-1",
+  tag = "1.1.0-1",
   url = "git://github.com/LuaDist-testing/30log.git"
 }
 -- Original source
 -- source = {
---    url = "https://github.com/Yonaba/30log/archive/30log-1.0.0-1.tar.gz",
---    dir = "30log-30log-1.0.0-1"
+--    url = "https://github.com/Yonaba/30log/archive/30log-1.1.0-1.tar.gz",
+--    dir = "30log-30log-1.1.0-1"
 -- }
 description = {
   summary = "30 lines library for object orientation",
   detailed = [[
     30log, in extenso "30 Lines Of Goodness" is a minified library
     for object-orientation in Lua. It features named (and unnamed) classes,
-    single inheritance and provides basic support for mixins in 30 lines of code.]],
+    single inheritance and provides basic support for mixins.]],
   homepage = "http://yonaba.github.io/30log",
   license = "MIT <http://www.opensource.org/licenses/mit-license.php>"
 }
-dependencies = {"lua >= 5.1, <5.3"}
+dependencies = {"lua >= 5.1, <=5.3"}
 build = {
   type = "builtin",
   modules = {
     ["30log"] = "30log.lua",
-    ["30logclean"] = "30logclean.lua",
-    ["30logglobal"] = "30logglobal.lua",
-    ["singleton"] = "singleton.lua"
+    ["30log-clean"] = "30log-clean.lua",
+    ["30log-global"] = "30log-global.lua",
+    ["30log-singleton"] = "30log-singleton.lua"
   }
 }

@@ -1,5 +1,5 @@
 require 'luacov'
-local class = require '30log'
+local class = require('30log')
 
 context('class()', function()
 	
@@ -31,7 +31,7 @@ context('class()', function()
 	
 end)
 
-context('a class implements these methods', function()
+context('a class should have the following methods', function()
 
 	local aclass
 	
@@ -45,18 +45,38 @@ context('a class implements these methods', function()
 	
 	test('a method named "extend"', function() 
 		assert_type(aclass.extend, 'function')
+	end)		
+	
+	test('a method named "classOf"', function() 
+		assert_type(aclass.classOf, 'function')
 	end)
 	
-	test('a method named "extends"', function() 
-		assert_type(aclass.extends, 'function')
+	test('a method named "subclassOf"', function() 
+		assert_type(aclass.subclassOf, 'function')
+	end)		
+	
+	test('a method named "instanceOf"', function() 
+		assert_type(aclass.instanceOf, 'function')
 	end)
 	
-	test('a method named "include"', function() 
-		assert_type(aclass.include, 'function')
+	test('a method named "subclasses"', function() 
+		assert_type(aclass.subclasses, 'function')
 	end)
 	
+	test('a method named "instances"', function() 
+		assert_type(aclass.instances, 'function')
+	end)		
+	
+	test('a method named "with"', function() 
+		assert_type(aclass.with, 'function')
+	end)	
+
 	test('a method named "includes"', function() 
 		assert_type(aclass.includes, 'function')
+	end)	
+	
+	test('a method named "without"', function() 
+		assert_type(aclass.without, 'function')
 	end)
 	
 end)
@@ -70,13 +90,24 @@ context('a class also implements some attributes', function()
 	test('an attribute "name" which gives the class name', function()
 		assert_equal(aclass.name, 'aclass')
 	end)
-	
-	test('yet it can be nil in case the class is unnamed', function()
+			
+	test('yet it returns nil in case the class is unnamed', function()
 		assert_nil(class().name)
 	end)
 	
-	test('it also have a private attribute "mixins" which lists included mixins', function()
+	test('it also has an attribute "super" which is nil by default', function()
+		assert_nil(aclass.super)
+	end)
+
+	test('but holds a reference to the superclass of a class', function()
+		local asubclass = aclass:extend()
+		assert_equal(asubclass.super, aclass)
+	end)		
+	
+	test('it also has some private attributes', function()
 		assert_type(aclass.mixins, 'table')
+		assert_type(aclass.__subclasses, 'table')
+		assert_type(aclass.__instances, 'table')
 	end)
 	
 	test('and some private metamethods meant for its instances', function()
@@ -106,11 +137,11 @@ context('attributes can be defined', function()
 		assert_equal(aclass.value, 0)
 	end)
 	
-	test('passed-in attributes set the class name if not provided', function()
+	test('passed-in attributes can be used to set the class name', function()
 		assert_equal(aclass2.name, 'aclass2')
 	end)
 	
-	test('but cannot override the name argument', function()
+	test('but they will not override the name argument if supplied', function()
 		assert_equal(aclass.name, 'aclass')
 	end)
 		
@@ -149,7 +180,7 @@ context('methods can also be defined', function()
 		assert_equal(subclass:greet(), 'hi!')
 	end)
 	
-	test('but they can override their superclass methods', function()
+	test('but they can redefine their own implementation', function()
 		local subclass = aclass:extend()
 		function subclass:greet(someone) return 'hello ' .. someone ..'!' end
 		assert_equal(subclass:greet('world'), 'hello world!')
@@ -157,59 +188,4 @@ context('methods can also be defined', function()
 	end)
 	
 end)
-
-context('classes supports metamethods', function()
 	
-	local aclass
-	
-	before(function() 
-		aclass = class('aclass', {x = 0})
-		function aclass:init(x) self.x = x end
-		
-		aclass.__add = function(a,b) return a.x + b.x end
-		aclass.__sub = function(a,b) return a.x - b.x end
-		aclass.__mul = function(a,b) return a.x * b.x end
-		aclass.__div = function(a,b) return a.x / b.x end
-		aclass.__mod = function(a,b) return a.x % b.x end
-		aclass.__pow = function(a,b) return a.x ^ b.x end
-		aclass.__unm = function(a,b) return -(a.x) end
-		aclass.__concat = function(a,b) return a.x ..':'.. b.x end
-		aclass.__eq = function(a,b) return a.x == b.x end
-		aclass.__lt = function(a,b) return a.x < b.x end
-		aclass.__le = function(a,b) return a.x <= b.x end
-	end)
-	
-	test('instances of class can access those metamethods', function()
-		local instance1, instance2 = aclass(5), aclass(5)	
-		assert_equal(instance1 + instance2, 10) 
-		assert_equal(instance1 - instance2, 0) 
-		assert_equal(instance1 * instance2, 25) 
-		assert_equal(instance1 / instance2, 1) 
-		assert_equal(instance1 % instance2, 0) 
-		assert_equal(instance1 ^ instance2, 3125) 
-		assert_equal(-instance1, -5) 		
-		assert_equal(instance1 .. instance2, '5:5')			
-		assert_true(instance1 == instance2)
-		assert_false(instance1 < instance2)
-		assert_true(instance1 <= instance2) 
-	end)
-	
-	test('instances of subclasses can also access those metamethods', function()
-		local subclass = aclass:extend()
-		function subclass:init(x) subclass.super.init(self, x) end
-		local instance1, instance2 = subclass(5), subclass(5)	
-		assert_equal(instance1 + instance2, 10) 
-		assert_equal(instance1 - instance2, 0) 
-		assert_equal(instance1 * instance2, 25) 
-		assert_equal(instance1 / instance2, 1) 
-		assert_equal(instance1 % instance2, 0) 
-		assert_equal(instance1 ^ instance2, 3125) 
-		assert_equal(-instance1, -5) 
-		assert_equal(instance1 .. instance2, '5:5')
-		assert_true(instance1 == instance2)
-		assert_false(instance1 < instance2)
-		assert_true(instance1 <= instance2)
-	end)
-	
-end)
-  
