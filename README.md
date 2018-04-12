@@ -6,7 +6,7 @@
 __30log__, in extenso *30 Lines Of Goodness* is a minified framework for [object-orientation](http://lua-users.org/wiki/ObjectOrientedProgramming) in Lua.
 It features __class creation__, __object instantiation__, __single inheritance__ and provides basic support for __mixins__.<br/>
 It makes __30 lines__. No less, no more.<br/>
-__30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet it is compatible with [Lua 5.2.x.](http://www.lua.org/versions.html#5.2) and [Lua 5.3.x](http://www.lua.org/versions.html#5.3).
+__30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet it is compatible with [Lua 5.2.x.](http://www.lua.org/versions.html#5.2).
 
 ##Contents
 * [Download](https://github.com/Yonaba/30log/#download)
@@ -17,8 +17,7 @@ __30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet i
 * [Printing classes and objects](https://github.com/Yonaba/30log/#printing-classes-and-objects)
 * [Class Commons support](https://github.com/Yonaba/30log/#class-commons)
 * [Specification](https://github.com/Yonaba/30log/#specification)
-* [Clean source](https://github.com/Yonaba/30log/#clean-source)
-* [30log global](https://github.com/Yonaba/30log/#30log-global)
+* [Source](https://github.com/Yonaba/30log/#source)
 * [Benchmark](https://github.com/Yonaba/30log/#benchmark)
 * [Contributors](https://github.com/Yonaba/30log/#contributors)
 
@@ -29,13 +28,13 @@ You can download __30log__ via:
 ###Bash
 
 ```bash
-git clone git://github.com/Yonaba/30log.git --recursive
+git clone git://github.com/Yonaba/30log.git
 ````
 
 ###Archive
 
-* __Zip__: [0.6.0](https://github.com/Yonaba/30log/archive/30log-0.6.0.zip) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
-* __Tar.gz__: [0.6.0](https://github.com/Yonaba/30log/archive/30log-0.6.0.tar.gz) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
+* __Zip__: [0.7.0](https://github.com/Yonaba/30log/archive/30log-0.7.0.zip) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
+* __Tar.gz__: [0.7.0](https://github.com/Yonaba/30log/archive/30log-0.7.0.tar.gz) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
 
 ###LuaRocks
 
@@ -369,75 +368,51 @@ print(kitten) --> "object (of Cat): <table: 00411880>"
 
 ##Class Commons
 [Class-Commons](https://github.com/bartbes/Class-Commons) is an interface that provides a common 
-API for a wide range of object orientation libraries in Lua.
-The original support for Class Commmons was provided by [TsT2005](https://github.com/tst2005). 
-
-```lua
-require("30logclasscommons")
-
--- Now use these
-common.class(...)
-common.instance(...)
-```
+API for a wide range of object orientation libraries in Lua. There is a small plugin, originally written by [TsT](https://github.com/tst2005) 
+which provides compatibility between *30log* and *Class-commons*.
+See here: [30logclasscommons](http://github.com/Yonaba/30logclasscommons).
 
 ##Specification
-
-###30log specs
 
 You can run the included specs with [Telescope](https://github.com/norman/telescope) using the following 
 command from the root foolder:
 
 ```
-lua tsc -f tests/lib_specs/*
+lua tsc -f specs/*
 ```
 
-###Class-Commons testing implementation
+###Source
 
-You can test the implementation of Class-commons with the following command from the root folder:
-
-```
-lua tests/class_commons/tests/tests.lua tests/class_commons/commons_tests
-```
-
-**Note**: The tests are included as a submodule in this repository. Make sure to have the submodule [test file](https://github.com/bartbes/Class-Commons-Tests/blob/master/tests.lua) in your local copy.
-In case you don't, fetch it with the following command from Git.
-
-```
-git submodule init
-git submodule update
-```
-
-##Clean source
-
+###30logclean
 __30log__ was initially designed for minimalistic purposes. But then commit after commit, I came  with a source code
 that was obviously surpassing 30 lines. I opted to stick to the "30-lines" rule. And, as a trade-off, the original source is not 
 much elegant, yet 100 % functional.<br/>
 For those who might be interested, though, the file [30logclean.lua](https://github.com/Yonaba/30log/blob/master/30logclean.lua) contains the full source code, 
 properly formatted and well indented for your perusal.
 
-##30log global
+###30logglobal
 
-Well, not much. The relevant file [30logglobal.lua](https://github.com/Yonaba/30log/blob/master/30logglobal.lua) features the same source as the original [30log.lua](https://github.com/Yonaba/30log/blob/master/30log.lua), excepts that it sets a global function named `class`.
-This is convenient for some embed Lua implementations such as [Codea](http://twolivesleft.com/Codea/).
+The file [30logglobal.lua](https://github.com/Yonaba/30log/blob/master/30logglobal.lua) features the same source as the original [30log.lua](https://github.com/Yonaba/30log/blob/master/30log.lua), excepts that it sets a global function named `class`.
+This is convenient for Lua-based frameworks such as [Codea](http://twolivesleft.com/Codea/).
 
 ##Benchmark
 
-Performance tests featuring class creations, instantiation and such have been included.
-You can run these test with the following command with Lua from the root folder, passing to the test script the actual implementation to be tested.
+Performance tests featuring classes creation, instantiation and such have been included.
+You can run these tests with the following command with Lua from the root folder, passing to the test script the actual implementation to be tested.
 
 ```lua
-lua tests\benchmark\tests.lua 30log
+lua performance/tests.lua 30log
 ````
 
-Find [here an example of output](https://github.com/Yonaba/30log/tree/master/tests/benchmark/results.md).
+Find [here an example of output](https://github.com/Yonaba/30log/tree/master/performance/results.md).
 
 ##Contributors
-* [TsT2005](https://github.com/tst2005), for Class-commons support.
+* [TsT2005](https://github.com/tst2005), for the original Class-commons support.
 
 
 ##License
 This work is under [MIT-LICENSE](http://www.opensource.org/licenses/mit-license.php)<br/>
-Copyright (c) 2012-2013 Roland Yonaba
+Copyright (c) 2012-2014 Roland Yonaba
 
     Permission is hereby granted, free of charge, to any person obtaining a
     copy of this software and associated documentation files (the
@@ -457,3 +432,5 @@ Copyright (c) 2012-2013 Roland Yonaba
     CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
     TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
     SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/Yonaba/30log/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
