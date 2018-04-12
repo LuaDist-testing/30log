@@ -72,10 +72,18 @@ context('Instances (Objects)',function()
   end)
 	
 	context('tostring', function()
+	
 		test('objects can be stringified', function()
 			local myClass = Class()
-			assert_not_nil(tostring(myClass()):match('object: <table: [%d%w]+>'))
+			assert_equal(tostring(myClass()):match('(.+):%s<.+>$'), 'object (of Unnamed)')
 		end)
-	end)	
+
+		test('the output takes into account the mother class name can be stringified', function()
+			local myClass = Class()
+			myClass.__name = 'aClass'
+			assert_equal(tostring(myClass()):match('(.+):%s<.+>$'), 'object (of aClass)')
+		end)		
+		
+	end)
   
 end)
