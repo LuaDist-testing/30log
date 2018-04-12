@@ -1,17 +1,9 @@
--- This file was automatically generated for the LuaDist project.
-
 package = "30log"
-version = "1.2.0-1"
--- LuaDist source
+version = "1.3.0-1"
 source = {
-  tag = "1.2.0-1",
-  url = "git://github.com/LuaDist-testing/30log.git"
+   url = "https://github.com/Yonaba/30log/archive/30log-1.3.0-1.tar.gz",
+   dir = "30log-30log-1.3.0-1"
 }
--- Original source
--- source = {
---    url = "https://github.com/Yonaba/30log/archive/30log-1.2.0-1.tar.gz",
---    dir = "30log-30log-1.2.0-1"
--- }
 description = {
   summary = "30 lines library for object orientation",
   detailed = [[
@@ -28,6 +20,7 @@ build = {
     ["30log"] = "30log.lua",
     ["30log-clean"] = "30log-clean.lua",
     ["30log-global"] = "30log-global.lua",
-    ["30log-singleton"] = "30log-singleton.lua"
+    ["30log-singleton"] = "30log-singleton.lua",
+    ["30log-commons"] = "30log-commons.lua",
   }
 }
