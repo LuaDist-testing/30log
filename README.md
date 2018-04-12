@@ -4,9 +4,9 @@
 [![Build Status](https://travis-ci.org/Yonaba/30log.png)](https://travis-ci.org/Yonaba/30log)
 
 __30log__, in extenso *30 Lines Of Goodness* is a minified framework for [object-orientation](http://lua-users.org/wiki/ObjectOrientedProgramming) in Lua.
-It features __class creation__, __object instantiation__, __single inheritance__ and a basic support for __mixins__.<br/>
-And, it makes __30 lines__. No less, no more.<br/>
-__30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet it is compatible with [Lua 5.2.x.](http://www.lua.org/versions.html#5.2)
+It features __class creation__, __object instantiation__, __single inheritance__ and provides basic support for __mixins__.<br/>
+It makes __30 lines__. No less, no more.<br/>
+__30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet it is compatible with [Lua 5.2.x.](http://www.lua.org/versions.html#5.2) and [Lua 5.3.x](http://www.lua.org/versions.html#5.3).
 
 ##Contents
 * [Download](https://github.com/Yonaba/30log/#download)
@@ -18,6 +18,8 @@ __30log__ was meant for [Lua 5.1.x](http://www.lua.org/versions.html#5.1), yet i
 * [Class Commons support](https://github.com/Yonaba/30log/#class-commons)
 * [Specification](https://github.com/Yonaba/30log/#specification)
 * [Clean source](https://github.com/Yonaba/30log/#clean-source)
+* [30log global](https://github.com/Yonaba/30log/#30log-global)
+* [Benchmark](https://github.com/Yonaba/30log/#benchmark)
 * [Contributors](https://github.com/Yonaba/30log/#contributors)
 
 ##Download
@@ -27,13 +29,13 @@ You can download __30log__ via:
 ###Bash
 
 ```bash
-git clone git://github.com/Yonaba/30log.git
+git clone git://github.com/Yonaba/30log.git --recursive
 ````
 
 ###Archive
 
-* __Zip__: [0.5.0](https://github.com/Yonaba/30log/archive/30log-0.5.0.zip) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
-* __Tar.gz__: [0.5.0](https://github.com/Yonaba/30log/archive/30log-0.5.0.tar.gz) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
+* __Zip__: [0.6.0](https://github.com/Yonaba/30log/archive/30log-0.6.0.zip) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
+* __Tar.gz__: [0.6.0](https://github.com/Yonaba/30log/archive/30log-0.6.0.tar.gz) ( *latest stable, recommended* ) | [older versions](https://github.com/Yonaba/30log/tags)
 
 ###LuaRocks
 
@@ -49,8 +51,8 @@ luarocks install --server=http://rocks.moonscript.org/manifests/Yonaba 30log
 
 ##Installation
 Copy the file [30log.lua](https://github.com/Yonaba/30log/blob/master/30log.lua) inside your project folder,
-call it using [require](http://pgl.yoyo.org/luai/i/require) function. It will return a single function, 
-while keeping safe the global environment.<br/>
+call it using [require](http://pgl.yoyo.org/luai/i/require) function. It will return a single local function, 
+keeping safe the global environment.<br/>
 
 ##Quicktour
 ###Creating a class
@@ -230,7 +232,8 @@ print(appFrame.x,appFrame.y) --> 400, 300
 
 ##Chained initialisation
 In a single inheritance tree,  the `__init` constructor can be chained from one class to 
-another ( *Initception ?* ).
+another. This is called *initception*.<br/>
+And, yes, *it is a joke.*
 
 ```lua
 -- A mother class 'A'
@@ -267,9 +270,36 @@ for k,v in pairs(objD) do print(k,v) end
 -- Output:
 --> a  1
 --> d  4
---> c	3
---> b	2
+--> c  3
+--> b  2
 ```
+
+The previous syntax can also be simplified, as follows:
+
+```lua
+local A = Class()
+function A:__init(a)
+  self.a = a
+end
+
+local B = A:extends()
+function B:__init(a, b)
+  B.super.__init(self, a)
+  self.b = b
+end
+
+local C = B:extends()
+function C:__init(a, b, c)
+  C.super.__init(self, a, b)
+  self.c = c
+end
+
+local D = C:extends()
+function D:__init(a, b, c, d)
+  D.super.__init(self, a, b, c)
+  self.d = d
+end
+````
 
 ##Mixins
 
@@ -340,10 +370,12 @@ print(kitten) --> "object (of Cat): <table: 00411880>"
 ##Class Commons
 [Class-Commons](https://github.com/bartbes/Class-Commons) is an interface that provides a common 
 API for a wide range of object orientation libraries in Lua.
-The support for Class Commmons was provided by [TsT2005](https://github.com/tst2005). 
+The original support for Class Commmons was provided by [TsT2005](https://github.com/tst2005). 
 
 ```lua
 require("30logclasscommons")
+
+-- Now use these
 common.class(...)
 common.instance(...)
 ```
@@ -352,23 +384,27 @@ common.instance(...)
 
 ###30log specs
 
-You can run the included specs sing [Telescope](https://github.com/norman/telescope) with the following 
+You can run the included specs with [Telescope](https://github.com/norman/telescope) using the following 
 command from the root foolder:
 
 ```
-tsc -f specs/*
+lua tsc -f tests/lib_specs/*
 ```
 
 ###Class-Commons testing implementation
-See [Class-Commons-Tests](https://github.com/bartbes/Class-Commons-Tests)
+
+You can test the implementation of Class-commons with the following command from the root folder:
 
 ```
-$ lua tests.lua 30logclasscommons
-Testing implementation: 30logclasscommons
-  Summary:
-    Failed: 0
-    Out of: 10
-    Rate: 100%
+lua tests/class_commons/tests/tests.lua tests/class_commons/commons_tests
+```
+
+**Note**: The tests are included as a submodule in this repository. Make sure to have the submodule [test file](https://github.com/bartbes/Class-Commons-Tests/blob/master/tests.lua) in your local copy.
+In case you don't, fetch it with the following command from Git.
+
+```
+git submodule init
+git submodule update
 ```
 
 ##Clean source
@@ -378,6 +414,22 @@ that was obviously surpassing 30 lines. I opted to stick to the "30-lines" rule.
 much elegant, yet 100 % functional.<br/>
 For those who might be interested, though, the file [30logclean.lua](https://github.com/Yonaba/30log/blob/master/30logclean.lua) contains the full source code, 
 properly formatted and well indented for your perusal.
+
+##30log global
+
+Well, not much. The relevant file [30logglobal.lua](https://github.com/Yonaba/30log/blob/master/30logglobal.lua) features the same source as the original [30log.lua](https://github.com/Yonaba/30log/blob/master/30log.lua), excepts that it sets a global function named `class`.
+This is convenient for some embed Lua implementations such as [Codea](http://twolivesleft.com/Codea/).
+
+##Benchmark
+
+Performance tests featuring class creations, instantiation and such have been included.
+You can run these test with the following command with Lua from the root folder, passing to the test script the actual implementation to be tested.
+
+```lua
+lua tests\benchmark\tests.lua 30log
+````
+
+Find [here an example of output](https://github.com/Yonaba/30log/tree/master/tests/benchmark/results.md).
 
 ##Contributors
 * [TsT2005](https://github.com/tst2005), for Class-commons support.
