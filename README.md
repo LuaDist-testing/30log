@@ -1,13 +1,38 @@
 30log
 =====
 
-__30log__, in extenso *30 Lines Of Goodness* is a minified framework for [pseudo object-orientation](http://lua-users.org/wiki/ObjectOrientedProgramming) in Lua.
-It features __class creation__, __instantiation__, __inheritance__ .<br/>
+[![Build Status](https://travis-ci.org/Yonaba/30log.png)](https://travis-ci.org/Yonaba/30log)
+
+__30log__, in extenso *30 Lines Of Goodness* is a minified framework for [object-orientation](http://lua-users.org/wiki/ObjectOrientedProgramming) in Lua.
+It features __class creation__, __instantiation__, __single inheritance__ .<br/>
 And, it makes __30 lines__. No less, no more.
+
+##Download
+###Bash
+
+```bash
+git clone git://github.com/Yonaba/30log.git
+````
+
+###Archive
+* __Zip__: [current](https://github.com/Yonaba/30log/archive/master.zip) | [old packages](https://github.com/Yonaba/30log/tags)
+* __Tar.gz__: [current](https://github.com/Yonaba/30log/archive/master.tar.gz) | [old packages](https://github.com/Yonaba/30log/tags)
+
+###LuaRocks
+
+```
+luarocks install 30log
+````
+
+###MoonRocks
+
+```bash
+luarocks install --server=http://rocks.moonscript.org/manifests/Yonaba 30log
+````
 
 ##Installation
 Copy the file [30log.lua](https://github.com/Yonaba/30log/blob/master/Lib/30log.lua) inside your project folder, call it using [require](http://pgl.yoyo.org/luai/i/require) function.<br/>
-When loaded, __30log__ returns its main function .
+When loaded, __30log__ returns its main function.
 
 ##Quicktour
 ###Creating a class
@@ -140,13 +165,122 @@ print(appFrame.x,appFrame.y) --> 0, 100
 appFrame.super.set(appFrame,400,300)
 print(appFrame.x,appFrame.y) --> 400, 300
 ```
+##Chained initialisation
+In a single inheritance model, <tt>**__init**</tt> constructor can be chained from one class to another.
+
+```lua
+-- A mother class 'A'
+local A = Class()
+function A.__init(instance,a)
+  instance.a = a
+end
+
+-- Class 'B', deriving from class 'A'
+local B = A:extends()
+function B.__init(instance, a, b)
+  B.super.__init(instance, a)
+  instance.b = b
+end
+
+-- Class 'C', deriving from class 'B'
+local C = B:extends()
+function C.__init(instance, a, b, c)
+  C.super.__init(instance,a, b)
+  instance.c = c
+end
+
+-- Class 'D', deriving from class 'C'
+local D = C:extends()
+function D.__init(instance, a, b, c, d)
+  D.super.__init(instance,a, b, c)
+  instance.d = d
+end
+
+-- Creating an instance of class 'D'
+local objD = D(1,2,3,4)
+for k,v in pairs(objD) do print(k,v) end
+
+-- Output:
+--> a	1
+--> d	4
+--> c	3
+--> b	2
+```
+
+##Class Commons support
+[Class-Commons](https://github.com/bartbes/Class-Commons) is an interface that provides a common API for lua classes libraries.
+
+```lua
+require("30logclasscommons")
+
+common.class(...)
+common.instance(...)
+```
 
 ##Specification
-Specs tests have been included. Run them using [Telescope](https://github.com/norman/telescope) with the following command from the root foolder:
 
+###30log Specs
+Specs tests have been included.<br/>
+Run them using [Telescope](https://github.com/norman/telescope) with the following command from the root foolder:
 ```
 tsc -f specs/*
 ```
+
+````
+------------------------------------------------------------------------
+Class():                                                             
+When Class is called with no args passed:                            
+  it returns a new class (regular Lua table)                         [P]
+Attributes:                                                          
+  can be added to classes                                            [P]
+  can be passed in a table to Class()                                [P]
+Methods:                                                             
+  can be added to classes                                            [P]
+------------------------------------------------------------------------
+Derivation (Inheritance):                                            
+Class can be derived from a superclass:                              
+  Via "extends()" method                                             [P]
+  With extra-arguments passed to method "extends()" as a table       [P]
+A derived class still points to its superclass:                      
+  Via its "super" key                                                [P]
+  Via "getmetatable()" function                                      [P]
+A derived class:                                                     
+  can instantiate objects                                            [P]
+  shares its superclass attributes                                   [P]
+  shares its superclass methods                                      [P]
+  can reimplement its superclass methods                             [P]
+  Yet, it still has access to the original superclass method         [P]
+In a single inheritance model:                                       
+  __init() class constructor can chain                               [P]
+------------------------------------------------------------------------
+Instances (Objects):                                                 
+When a class is created:                                             
+  new objects can be created via Class:new()                         [P]
+  new objects can be created calling the class as a function         [P]
+  new objects share their class attributes                           [P]
+  new objects share their class methods                              [P]
+Providing an :__init() method to classes:                            
+  Overrides instantiation scheme with Class:new()                    [P]
+  Overrides instantiation scheme with Class()                        [P]
+------------------------------------------------------------------------
+20 tests 20 passed 35 assertions 0 failed 0 errors 0 unassertive 0 pending
+````
+
+###Class-Commons testing implementation
+See [Class-Commons-Tests](https://github.com/bartbes/Class-Commons-Tests)
+
+```
+$ lua tests.lua 30logclasscommons
+Testing implementation: 30logclasscommons
+  Summary:
+    Failed: 0
+    Out of: 10
+    Rate: 100%
+```
+
+##Contributors
+* [TsT2005](https://github.com/tst2005), for Class-commons support.
+
 
 ##License
 This work is under [MIT-LICENSE](http://www.opensource.org/licenses/mit-license.php)<br/>

@@ -1,5 +1,11 @@
 #Version history#
 
+##0.3.0 (09/01/13)
+* Added Class-Commons support (Thanks to [TsT2005](https://github.com/tst2005))
+* Added Tracis-CI validation
+* Updated Readme with chained initialization sample
+* Updated specs
+
 ##0.2.1 (10/31/12)
 * Added specs
 
