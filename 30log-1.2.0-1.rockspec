@@ -1,16 +1,16 @@
 -- This file was automatically generated for the LuaDist project.
 
 package = "30log"
-version = "1.1.0-1"
+version = "1.2.0-1"
 -- LuaDist source
 source = {
-  tag = "1.1.0-1",
+  tag = "1.2.0-1",
   url = "git://github.com/LuaDist-testing/30log.git"
 }
 -- Original source
 -- source = {
---    url = "https://github.com/Yonaba/30log/archive/30log-1.1.0-1.tar.gz",
---    dir = "30log-30log-1.1.0-1"
+--    url = "https://github.com/Yonaba/30log/archive/30log-1.2.0-1.tar.gz",
+--    dir = "30log-30log-1.2.0-1"
 -- }
 description = {
   summary = "30 lines library for object orientation",
